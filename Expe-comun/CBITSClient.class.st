@@ -1,3 +1,8 @@
+"
+mst := CBITSClient new. 
+mst sendBlockToExecute: '[1+1]'.
+mst messageReceive.
+"
 Class {
 	#name : #CBITSClient,
 	#superclass : #Object,
@@ -12,18 +17,6 @@ Class {
 { #category : #'instance creation' }
 CBITSClient class >> new: anIPAdress on: aPort [
 	
-]
-
-{ #category : #tests }
-CBITSClient >> executeBlockInServer [
-
-	((serverStream upTo: Character cr) = 'exec block')
-		ifTrue: [ results := OpalCompiler new
-				evaluate: (serverStream upTo: Character cr), ' value'.
-			clientStream
-				nextPutAll: 'result' , String cr , results asString , String cr;
-				flush ]
-		ifFalse: [ self error: 'Not done yet' ]
 ]
 
 { #category : #initialization }
@@ -42,7 +35,7 @@ CBITSClient >> initialize [
 { #category : #tests }
 CBITSClient >> messageReceive [
 	
-	^(serverStream next: 100 into: (String new: 100) startingAt: 1) 
+	^(clientStream next: 100 into: (String new: 100) startingAt: 1) 
 	
 ]
 
@@ -64,6 +57,13 @@ CBITSClient >> results [
 { #category : #accessing }
 CBITSClient >> results: anObject [
 	results := anObject
+]
+
+{ #category : #tests }
+CBITSClient >> resultsReceiveds [
+	
+	^(clientStream next: 100 into: (String new: 100) startingAt: 1) 
+	
 ]
 
 { #category : #tests }
