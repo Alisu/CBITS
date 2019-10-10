@@ -1,8 +1,10 @@
+"
+mst := CBITSServer new.
+"
 Class {
 	#name : #CBITSServer,
 	#superclass : #Object,
 	#instVars : [
-		'clientStream',
 		'serverStream',
 		'messages',
 		'results'
@@ -11,15 +13,12 @@ Class {
 }
 
 { #category : #tests }
-CBITSServer >> executeBlockInServer [
+CBITSServer >> executeBlock [
 
 	((serverStream upTo: Character cr) = 'exec block')
 		ifTrue: [ results := OpalCompiler new
-				evaluate: (serverStream upTo: Character cr), ' value'.
-			clientStream
-				nextPutAll: 'result' , String cr , results asString , String cr;
-				flush ]
-		ifFalse: [ self error: 'Not done yet' ]
+				evaluate: (serverStream upTo: Character cr), ' value'. ]
+		ifFalse: [ self error: 'Not implemented yet' ]
 ]
 
 { #category : #initialization }
@@ -29,11 +28,13 @@ CBITSServer >> initialize [
 	
 	[listener listenOn: 40001 backlogSize: 4.
 
-	serverSocket := listener waitForAcceptFor: 1.
+	serverSocket := listener waitForAcceptFor: 90.
 	self assert: serverSocket isConnected.
 	] ensure:[listener destroy].
 
 	serverStream := SocketStream on: serverSocket.
+	self 	executeBlock.
+	self sendResults.
 ]
 
 { #category : #tests }
@@ -64,22 +65,10 @@ CBITSServer >> results: anObject [
 ]
 
 { #category : #tests }
-CBITSServer >> sendBlockToExecute: aBlock [
-	"Ensure that #next:into: will function properly when the connection is closed"
+CBITSServer >> sendResults [
 
-	clientStream nextPutAll:'exec block', String cr, aBlock asString, String cr; flush.
-	[(Delay forMilliseconds: 100) wait.
-	clientStream close] fork.
-
-
-]
-
-{ #category : #tests }
-CBITSServer >> sendMessageToExecute: aSelector from: aReceiver withArgs: aCollection [
-	"Ensure that #next:into: will function properly when the connection is closed"
-
-	clientStream nextPutAll:'exec', String cr, aSelector; flush.
-	[(Delay forMilliseconds: 100) wait.
-	clientStream close] fork.
+			serverStream
+				nextPutAll: 'result' , String cr , results asString , String cr;
+				flush.
 
 ]

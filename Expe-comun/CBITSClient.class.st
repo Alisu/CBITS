@@ -3,7 +3,6 @@ Class {
 	#superclass : #Object,
 	#instVars : [
 		'clientStream',
-		'serverStream',
 		'messages',
 		'results'
 	],
