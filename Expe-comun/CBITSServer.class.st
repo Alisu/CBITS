@@ -1,5 +1,5 @@
 Class {
-	#name : #MessageSendThroughSocket,
+	#name : #CBITSServer,
 	#superclass : #Object,
 	#instVars : [
 		'clientStream',
@@ -11,7 +11,7 @@ Class {
 }
 
 { #category : #tests }
-MessageSendThroughSocket >> executeBlockInServer [
+CBITSServer >> executeBlockInServer [
 
 	((serverStream upTo: Character cr) = 'exec block')
 		ifTrue: [ results := OpalCompiler new
@@ -23,53 +23,48 @@ MessageSendThroughSocket >> executeBlockInServer [
 ]
 
 { #category : #initialization }
-MessageSendThroughSocket >> initialize [
-	| listener clientSocket serverSocket |
+CBITSServer >> initialize [
+	| listener serverSocket |
 	listener := Socket newTCP.
-	[listener listenOn: 0 backlogSize: 4.
-
-	clientSocket := Socket newTCP.
-	clientSocket connectTo: #[127 0 0 1] port: listener localPort.
-	clientSocket waitForConnectionFor: 1.
-	self assert: clientSocket isConnected.
+	
+	[listener listenOn: 40001 backlogSize: 4.
 
 	serverSocket := listener waitForAcceptFor: 1.
 	self assert: serverSocket isConnected.
 	] ensure:[listener destroy].
 
-	clientStream := SocketStream on: clientSocket.
 	serverStream := SocketStream on: serverSocket.
 ]
 
 { #category : #tests }
-MessageSendThroughSocket >> messageReceive [
+CBITSServer >> messageReceive [
 	
 	^(serverStream next: 100 into: (String new: 100) startingAt: 1) 
 	
 ]
 
 { #category : #accessing }
-MessageSendThroughSocket >> messages [
+CBITSServer >> messages [
 	^ messages
 ]
 
 { #category : #accessing }
-MessageSendThroughSocket >> messages: anObject [
+CBITSServer >> messages: anObject [
 	messages := anObject
 ]
 
 { #category : #accessing }
-MessageSendThroughSocket >> results [
+CBITSServer >> results [
 	^ results
 ]
 
 { #category : #accessing }
-MessageSendThroughSocket >> results: anObject [
+CBITSServer >> results: anObject [
 	results := anObject
 ]
 
 { #category : #tests }
-MessageSendThroughSocket >> sendBlockToExecute: aBlock [
+CBITSServer >> sendBlockToExecute: aBlock [
 	"Ensure that #next:into: will function properly when the connection is closed"
 
 	clientStream nextPutAll:'exec block', String cr, aBlock asString, String cr; flush.
@@ -80,7 +75,7 @@ MessageSendThroughSocket >> sendBlockToExecute: aBlock [
 ]
 
 { #category : #tests }
-MessageSendThroughSocket >> sendMessageToExecute: aSelector from: aReceiver withArgs: aCollection [
+CBITSServer >> sendMessageToExecute: aSelector from: aReceiver withArgs: aCollection [
 	"Ensure that #next:into: will function properly when the connection is closed"
 
 	clientStream nextPutAll:'exec', String cr, aSelector; flush.
