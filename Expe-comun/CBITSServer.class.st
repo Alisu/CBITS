@@ -89,10 +89,9 @@ CBITSServer >> results: anObject [
 { #category : #tests }
 CBITSServer >> sendResults [
 
-			serverStream
-				nextPutAll: 'result' , String cr ;
-				nextPutAll: (FLSerializer serializeToByteArray:  results);
-				nextPutAll: String cr;
-				flush.
+			serverStream nextPutAll: 'result' , String cr ;
+			nextPutAll: (FLSerializer serializeToByteArray:  results);
+			nextPutAll: String cr;
+			flush.
 
 ]
