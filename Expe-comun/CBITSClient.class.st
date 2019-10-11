@@ -36,7 +36,7 @@ CBITSClient >> initialize [
 CBITSClient >> messageReceive [
 	
 	^((clientStream upTo: Character cr) = 'result')
-		ifTrue: [ results := (clientStream upTo: Character cr). ]
+		ifTrue: [ results := FLMaterializer materializeFromByteArray: (clientStream upTo: Character cr). ]
 		ifFalse: [ self error: 'Not implemented yet' ]
 	
 ]
