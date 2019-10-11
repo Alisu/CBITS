@@ -1,7 +1,7 @@
 "
 mst := CBITSClient new. 
 mst sendBlockToExecute: '[1+1]'.
-mst messageReceive.
+
 "
 Class {
 	#name : #CBITSClient,
@@ -84,8 +84,12 @@ CBITSClient >> sendBlockToExecute: aBlock [
 CBITSClient >> sendMessageToExecute: aSelector from: aReceiver withArgs: aCollection [
 	"Ensure that #next:into: will function properly when the connection is closed"
 
-	clientStream nextPutAll:'exec', String cr, aSelector; flush.
-	[(Delay forMilliseconds: 100) wait.
-	clientStream close] fork.
-
+	clientStream
+		nextPutAll: 'exec msg', String cr;
+		nextPutAll: aSelector, String cr;
+		nextPutAll: (FLSerializer serializeToByteArray:aReceiver), String cr;
+		nextPutAll:(FLSerializer serializeToByteArray: aCollection);
+		nextPutAll: String cr;
+		flush.
+		self messageReceive.
 ]
