@@ -31,10 +31,10 @@ It means we expect the classes to be present on the other side.
 
 TODO:
 
--Having an error handling.
--Asking for an AST to be executed.
--Handling arguments in block and non-clean block
--Extension methods on block.
+- Having an error handling.
+- Asking for an AST to be executed.
+- Handling arguments in block and non-clean block
+- Extension methods on block.
 
 ```
 [Smalltalk globals at: #Object] computeElsewhere.
