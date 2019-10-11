@@ -90,7 +90,9 @@ CBITSServer >> results: anObject [
 CBITSServer >> sendResults [
 
 			serverStream
-				nextPutAll: 'result' , String cr , results asString , String cr;
+				nextPutAll: 'result' , String cr ;
+				nextPutAll: (FLSerializer serializeToByteArray:  results);
+				nextPutAll: String cr;
 				flush.
 
 ]
