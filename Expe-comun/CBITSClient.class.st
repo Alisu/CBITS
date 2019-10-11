@@ -35,7 +35,9 @@ CBITSClient >> initialize [
 { #category : #tests }
 CBITSClient >> messageReceive [
 	
-	^(clientStream next: 100 into: (String new: 100) startingAt: 1) 
+	^((clientStream upTo: Character cr) = 'result')
+		ifTrue: [ results := (clientStream upTo: Character cr). ]
+		ifFalse: [ self error: 'Not implemented yet' ]
 	
 ]
 
@@ -71,8 +73,9 @@ CBITSClient >> sendBlockToExecute: aBlock [
 	"Ensure that #next:into: will function properly when the connection is closed"
 
 	clientStream nextPutAll:'exec block', String cr, aBlock asString, String cr; flush.
-	[(Delay forMilliseconds: 100) wait.
-	clientStream close] fork.
+	"clientStream waitForData."
+	self messageReceive.
+
 
 
 ]
