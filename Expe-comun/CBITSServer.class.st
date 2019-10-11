@@ -20,11 +20,30 @@ CBITSServer class >> newOnPort: aPortNumber [
 
 { #category : #tests }
 CBITSServer >> executeBlock [
+	
+	results := OpalCompiler new
+		evaluate: (serverStream upTo: Character cr) , ' value'
+]
 
-	((serverStream upTo: Character cr) = 'exec block')
-		ifTrue: [ results := OpalCompiler new
-				evaluate: (serverStream upTo: Character cr), ' value'. ]
-		ifFalse: [ self error: 'Not implemented yet' ]
+{ #category : #'as yet unclassified' }
+CBITSServer >> executeMessage [
+	
+	| selector receiver arguments |
+	selector := (serverStream upTo: Character cr) asSymbol.
+	receiver := FLMaterializer materializeFromByteArray: (serverStream upTo: Character cr) asByteArray.
+	arguments := FLMaterializer materializeFromByteArray: (serverStream upTo: Character cr) asByteArray.
+ 
+	results := receiver perform: selector withArguments: arguments.
+]
+
+{ #category : #'as yet unclassified' }
+CBITSServer >> handleIncomingInstruction [
+	|instruction|
+	instruction := serverStream upTo: Character cr.
+	(instruction = 'exec block') ifTrue: [ ^self executeBlock ].
+	(instruction = 'exec msg') ifTrue: [ ^self executeMessage ].
+	^self error: 'Instruction: ', instruction, ' not understood'
+	
 ]
 
 { #category : #initialization }
@@ -55,7 +74,7 @@ CBITSServer >> initializeOnPort: aPort [
 	"] ensure:[listener destroy]."
 
 	serverStream := SocketStream on: serverSocket.
-	self 	executeBlock.
+	self handleIncomingInstruction.
 	self sendResults.
 ]
 
@@ -93,5 +112,6 @@ CBITSServer >> sendResults [
 			nextPutAll: (FLSerializer serializeToByteArray:  results);
 			nextPutAll: String cr;
 			flush.
+		
 
 ]
