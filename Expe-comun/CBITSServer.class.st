@@ -12,6 +12,12 @@ Class {
 	#category : #'Expe-comun'
 }
 
+{ #category : #'instance creation' }
+CBITSServer class >> newOnPort: aPortNumber [
+
+	^ self new initializeOnPort: aPortNumber.
+]
+
 { #category : #tests }
 CBITSServer >> executeBlock [
 
@@ -23,14 +29,30 @@ CBITSServer >> executeBlock [
 
 { #category : #initialization }
 CBITSServer >> initialize [
-	| listener serverSocket |
+	"| listener serverSocket |
 	listener := Socket newTCP.
 	
-	[listener listenOn: 40001 backlogSize: 4.
+	listener listenOn: 40001 backlogSize: 4.
 
 	serverSocket := listener waitForAcceptFor: 90.
 	self assert: serverSocket isConnected.
 	] ensure:[listener destroy].
+
+	serverStream := SocketStream on: serverSocket.
+	self 	executeBlock.
+	self sendResults."
+]
+
+{ #category : #initialization }
+CBITSServer >> initializeOnPort: aPort [
+	| listener serverSocket |
+	listener := Socket newTCP.
+	
+	listener listenOn: aPort backlogSize: 4.
+
+	serverSocket := listener waitForAcceptFor: 90.
+	self assert: serverSocket isConnected.
+	"] ensure:[listener destroy]."
 
 	serverStream := SocketStream on: serverSocket.
 	self 	executeBlock.
