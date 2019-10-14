@@ -69,6 +69,18 @@ CBITSClient >> resultsReceiveds [
 ]
 
 { #category : #tests }
+CBITSClient >> sendBlockToEvaluate: aBlock [
+	"Ensure that #next:into: will function properly when the connection is closed"
+
+	clientStream nextPutAll:'exec block', String cr, aBlock asString, String cr; flush.
+	"clientStream waitForData."
+	self messageReceive.
+
+
+
+]
+
+{ #category : #tests }
 CBITSClient >> sendBlockToExecute: aBlock [
 	"Ensure that #next:into: will function properly when the connection is closed"
 
