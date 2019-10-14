@@ -35,8 +35,8 @@ CBITSClient >> initialize [
 { #category : #tests }
 CBITSClient >> messageReceive [
 	
-	^((clientStream upTo: Character cr) = 'result')
-		ifTrue: [ results := FLMaterializer materializeFromByteArray: (clientStream upTo: Character cr) asByteArray. ]
+	^((clientStream upTo: $\) = 'result')
+		ifTrue: [ results := FLMaterializer materializeFromByteArray: (clientStream upTo: $\) asByteArray. ]
 		ifFalse: [ self error: 'Not implemented yet' ]
 	
 ]
@@ -72,19 +72,7 @@ CBITSClient >> resultsReceiveds [
 CBITSClient >> sendBlockToEvaluate: aBlock [
 	"Ensure that #next:into: will function properly when the connection is closed"
 
-	clientStream nextPutAll:'exec block str', String cr, aBlock asString, String cr; flush.
-	"clientStream waitForData."
-	self messageReceive.
-
-
-
-]
-
-{ #category : #tests }
-CBITSClient >> sendBlockToExecute: aBlock [
-	"Ensure that #next:into: will function properly when the connection is closed"
-
-	clientStream nextPutAll:'exec block str', String cr, aBlock asString, String cr; flush.
+	clientStream nextPutAll:'exec block str', '\', aBlock asString, '\'; flush.
 	"clientStream waitForData."
 	self messageReceive.
 
@@ -97,11 +85,11 @@ CBITSClient >> sendMessageToExecute: aSelector from: aReceiver withArgs: aCollec
 	"Ensure that #next:into: will function properly when the connection is closed"
 
 	clientStream
-		nextPutAll: 'exec msg', String cr;
-		nextPutAll: aSelector, String cr;
-		nextPutAll: (FLSerializer serializeToByteArray:aReceiver), String cr;
-		nextPutAll:(FLSerializer serializeToByteArray: aCollection);
-		nextPutAll: String cr;
+		nextPutAll: 
+		'exec msg',  '\',
+		aSelector, String cr, '\',
+		(FLSerializer serializeToByteArray:aReceiver), '\',
+		(FLSerializer serializeToByteArray: aCollection), '\';
 		flush.
 		self messageReceive.
 ]
@@ -110,7 +98,10 @@ CBITSClient >> sendMessageToExecute: aSelector from: aReceiver withArgs: aCollec
 CBITSClient >> sendSerializedBlockToEvaluate: aBlock [
 	"Ensure that #next:into: will function properly when the connection is closed"
 
-	clientStream nextPutAll:'exec block ser', String cr, (FLSerializer serializeToByteArray: aBlock asContext), String cr; flush.	
+	clientStream nextPutAll:
+	'exec block ser',  '\',
+	(FLSerializer serializeToByteArray: aBlock asContext), '\';
+	flush.	
 	"clientStream waitForData."
 	self messageReceive.
 
