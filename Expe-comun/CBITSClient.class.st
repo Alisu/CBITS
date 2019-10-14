@@ -72,7 +72,7 @@ CBITSClient >> resultsReceiveds [
 CBITSClient >> sendBlockToEvaluate: aBlock [
 	"Ensure that #next:into: will function properly when the connection is closed"
 
-	clientStream nextPutAll:'exec block', String cr, aBlock asString, String cr; flush.
+	clientStream nextPutAll:'exec block str', String cr, aBlock asString, String cr; flush.
 	"clientStream waitForData."
 	self messageReceive.
 
@@ -84,7 +84,7 @@ CBITSClient >> sendBlockToEvaluate: aBlock [
 CBITSClient >> sendBlockToExecute: aBlock [
 	"Ensure that #next:into: will function properly when the connection is closed"
 
-	clientStream nextPutAll:'exec block', String cr, aBlock asString, String cr; flush.
+	clientStream nextPutAll:'exec block ser', String cr, aBlock asString, String cr; flush.
 	"clientStream waitForData."
 	self messageReceive.
 
