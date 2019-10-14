@@ -49,8 +49,8 @@ CBITSServer >> executeMessage [
 CBITSServer >> handleIncomingInstruction [
 	|instruction|
 	instruction := serverStream upTo: Character cr.
-	(instruction = 'exec blockStr') ifTrue: [ ^self executeBlockStr ].
-	(instruction = 'exec blockSer') ifTrue: [ ^self executeBlockSer ].
+	(instruction = 'exec block str') ifTrue: [ ^self executeBlockStr ].
+	(instruction = 'exec block ser') ifTrue: [ ^self executeBlockSer ].
 	(instruction = 'exec msg') ifTrue: [ ^self executeMessage ].
 	^self error: 'Instruction: ', instruction, ' not understood'
 	
