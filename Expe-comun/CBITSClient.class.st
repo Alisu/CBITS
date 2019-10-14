@@ -84,7 +84,7 @@ CBITSClient >> sendBlockToEvaluate: aBlock [
 CBITSClient >> sendBlockToExecute: aBlock [
 	"Ensure that #next:into: will function properly when the connection is closed"
 
-	clientStream nextPutAll:'exec block ser', String cr, aBlock asString, String cr; flush.
+	clientStream nextPutAll:'exec block str', String cr, aBlock asString, String cr; flush.
 	"clientStream waitForData."
 	self messageReceive.
 
@@ -110,7 +110,7 @@ CBITSClient >> sendMessageToExecute: aSelector from: aReceiver withArgs: aCollec
 CBITSClient >> sendSerializedBlockToEvaluate: aBlock [
 	"Ensure that #next:into: will function properly when the connection is closed"
 
-	clientStream nextPutAll:'exec block', String cr, (FLSerializer serializeToByteArray: aBlock), String cr; flush.	
+	clientStream nextPutAll:'exec block ser', String cr, (FLSerializer serializeToByteArray: aBlock asContext), String cr; flush.	
 	"clientStream waitForData."
 	self messageReceive.
 
