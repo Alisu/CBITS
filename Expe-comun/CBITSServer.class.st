@@ -22,7 +22,7 @@ CBITSServer class >> newOnPort: aPortNumber [
 CBITSServer >> executeBlockSer [
 	
 	|materializedBlock|
-	materializedBlock := FLMaterializer materializeFromByteArray: (serverStream upTo: Character cr) asByteArray.
+	materializedBlock := FLMaterializer materializeFromByteArray: (serverStream upTo: $\) asByteArray.
 	
 	results := materializedBlock value.
 ]
@@ -31,16 +31,16 @@ CBITSServer >> executeBlockSer [
 CBITSServer >> executeBlockStr [
 	
 	results := OpalCompiler new
-		evaluate: (serverStream upTo: Character cr) , ' value'
+		evaluate: (serverStream upTo: $\) , ' value'
 ]
 
 { #category : #'as yet unclassified' }
 CBITSServer >> executeMessage [
 	
 	| selector receiver arguments |
-	selector := (serverStream upTo: Character cr) asSymbol.
-	receiver := FLMaterializer materializeFromByteArray: (serverStream upTo: Character cr) asByteArray.
-	arguments := FLMaterializer materializeFromByteArray: (serverStream upTo: Character cr) asByteArray.
+	selector := (serverStream upTo: $\) asSymbol.
+	receiver := FLMaterializer materializeFromByteArray: (serverStream upTo: $\) asByteArray.
+	arguments := FLMaterializer materializeFromByteArray: (serverStream upTo:  $\) asByteArray.
  
 	results := receiver perform: selector withArguments: arguments.
 ]
@@ -48,7 +48,7 @@ CBITSServer >> executeMessage [
 { #category : #'as yet unclassified' }
 CBITSServer >> handleIncomingInstruction [
 	|instruction|
-	instruction := serverStream upTo: Character cr.
+	instruction := serverStream upTo: $\.
 	(instruction = 'exec block str') ifTrue: [ ^self executeBlockStr ].
 	(instruction = 'exec block ser') ifTrue: [ ^self executeBlockSer ].
 	(instruction = 'exec msg') ifTrue: [ ^self executeMessage ].
@@ -84,7 +84,7 @@ CBITSServer >> initializeOnPort: aPort [
 	"] ensure:[listener destroy]."
 
 	serverStream := SocketStream on: serverSocket.
-	[self handleIncomingInstruction.] on: Error do: [:error| results := (FLSerializer serializeToByteArray: error) ].
+	self handleIncomingInstruction."] on: Error do: [:error| results := (FLSerializer serializeToByteArray: error) ]."
 	self sendResults.
 ]
 
@@ -118,9 +118,9 @@ CBITSServer >> results: anObject [
 { #category : #tests }
 CBITSServer >> sendResults [
 
-			serverStream nextPutAll: 'result' , String cr ;
+			serverStream nextPutAll: 'result', '\' ;
 			nextPutAll: (FLSerializer serializeToByteArray:  results);
-			nextPutAll: String cr;
+			nextPutAll: '\';
 			flush.
 		
 
