@@ -84,7 +84,7 @@ CBITSServer >> initializeOnPort: aPort [
 	"] ensure:[listener destroy]."
 
 	serverStream := SocketStream on: serverSocket.
-	self handleIncomingInstruction.
+	[self handleIncomingInstruction.] on: Error do: [:error| results := (FLSerializer serializeToByteArray: error) ].
 	self sendResults.
 ]
 
