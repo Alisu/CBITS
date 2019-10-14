@@ -19,7 +19,16 @@ CBITSServer class >> newOnPort: aPortNumber [
 ]
 
 { #category : #tests }
-CBITSServer >> executeBlock [
+CBITSServer >> executeBlockSer [
+	
+	|materializedBlock|
+	materializedBlock := FLMaterializer materializeFromByteArray: (serverStream upTo: Character cr) asByteArray.
+	
+	results := materializedBlock value.
+]
+
+{ #category : #tests }
+CBITSServer >> executeBlockStr [
 	
 	results := OpalCompiler new
 		evaluate: (serverStream upTo: Character cr) , ' value'
@@ -40,7 +49,8 @@ CBITSServer >> executeMessage [
 CBITSServer >> handleIncomingInstruction [
 	|instruction|
 	instruction := serverStream upTo: Character cr.
-	(instruction = 'exec block') ifTrue: [ ^self executeBlock ].
+	(instruction = 'exec blockStr') ifTrue: [ ^self executeBlockStr ].
+	(instruction = 'exec blockSer') ifTrue: [ ^self executeBlockSer ].
 	(instruction = 'exec msg') ifTrue: [ ^self executeMessage ].
 	^self error: 'Instruction: ', instruction, ' not understood'
 	

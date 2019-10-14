@@ -105,3 +105,15 @@ CBITSClient >> sendMessageToExecute: aSelector from: aReceiver withArgs: aCollec
 		flush.
 		self messageReceive.
 ]
+
+{ #category : #tests }
+CBITSClient >> sendSerializedBlockToEvaluate: aBlock [
+	"Ensure that #next:into: will function properly when the connection is closed"
+
+	clientStream nextPutAll:'exec block', String cr, (FLSerializer serializeToByteArray: aBlock), String cr; flush.	
+	"clientStream waitForData."
+	self messageReceive.
+
+
+
+]

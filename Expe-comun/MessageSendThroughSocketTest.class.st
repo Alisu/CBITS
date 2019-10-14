@@ -17,6 +17,14 @@ MessageSendThroughSocketTest >> setUp [
 
 ]
 
+{ #category : #running }
+MessageSendThroughSocketTest >> tearDown [
+	"Hooks that subclasses may override to define the fixture of test."
+	server close.
+	client close.
+
+]
+
 { #category : #'as yet unclassified' }
 MessageSendThroughSocketTest >> testSendBlockToEvaluate [
 
