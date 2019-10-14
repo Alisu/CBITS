@@ -5,6 +5,6 @@ BlockClosure >> valueInAnotherImage [
 
 	| client |
 	client := CBITSClient new.
-	client sendBlockToExecute: [ Smalltalk globals at: #Object ].
+	client sendBlockToEvaluate: [ Smalltalk globals at: #Object ].
 	^client result
 ]
