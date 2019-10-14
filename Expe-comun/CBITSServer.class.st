@@ -29,7 +29,7 @@ CBITSServer >> executeBlockSer [
 
 { #category : #tests }
 CBITSServer >> executeBlockStr [
-	
+
 	results := OpalCompiler new
 		evaluate: (serverStream upTo: Character cr) , ' value'
 ]
