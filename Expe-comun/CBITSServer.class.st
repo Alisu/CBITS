@@ -22,7 +22,7 @@ CBITSServer class >> newOnPort: aPortNumber [
 CBITSServer >> executeBlockSer [
 	
 	|materializedBlock|
-	materializedBlock := FLMaterializer materializeFromByteArray: (serverStream upTo: $\) asByteArray.
+	materializedBlock := STON fromString: (serverStream upTo: $\).
 	
 	results := materializedBlock value.
 ]
@@ -38,9 +38,9 @@ CBITSServer >> executeBlockStr [
 CBITSServer >> executeMessage [
 	
 	| selector receiver arguments |
-	selector := (serverStream upTo: $\) asSymbol.
-	receiver := FLMaterializer materializeFromByteArray: (serverStream upTo: $\) asByteArray.
-	arguments := FLMaterializer materializeFromByteArray: (serverStream upTo:  $\) asByteArray.
+	selector := STON fromString:(serverStream upTo: $\).
+	receiver := STON fromString: (serverStream upTo: $\).
+	arguments := STON fromString: (serverStream upTo:  $\).
  
 	results := receiver perform: selector withArguments: arguments.
 ]
@@ -84,7 +84,7 @@ CBITSServer >> initializeOnPort: aPort [
 	"] ensure:[listener destroy]."
 
 	serverStream := SocketStream on: serverSocket.
-	self handleIncomingInstruction."] on: Error do: [:error| results := (FLSerializer serializeToByteArray: error) ]."
+	[self handleIncomingInstruction.] on: Error do: [:error| results := STON toString: error ].
 	self sendResults.
 ]
 
@@ -119,7 +119,7 @@ CBITSServer >> results: anObject [
 CBITSServer >> sendResults [
 
 			serverStream nextPutAll: 'result', '\' ;
-			nextPutAll: (FLSerializer serializeToByteArray:  results);
+			nextPutAll: (STON toString: results);
 			nextPutAll: '\';
 			flush.
 		
