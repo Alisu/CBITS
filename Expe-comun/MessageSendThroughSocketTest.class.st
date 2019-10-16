@@ -3,25 +3,32 @@ Class {
 	#superclass : #TestCase,
 	#instVars : [
 		'server',
-		'client'
+		'client',
+		'handler'
 	],
 	#category : #'Expe-comun'
 }
+
+{ #category : #'as yet unclassified' }
+MessageSendThroughSocketTest >> newproxy: target [
+	^ AvForwardingProxy target: target handler: handler
+]
 
 { #category : #running }
 MessageSendThroughSocketTest >> setUp [
 	"Hooks that subclasses may override to define the fixture of test."
 	super setUp.
-	[server := CBITSServer newOnPort: 40001].
-	[client := CBITSClient new]. 
+	"[server := CBITSServer newOnPort: 40001]".
+	client := CBITSClient new. 
+	handler := CBITSHandler new.
 
 ]
 
 { #category : #running }
 MessageSendThroughSocketTest >> tearDown [
 	"Hooks that subclasses may override to define the fixture of test."
-	server close.
-	client close.
+	"server close."
+	"client close."
 
 ]
 
@@ -29,7 +36,7 @@ MessageSendThroughSocketTest >> tearDown [
 MessageSendThroughSocketTest >> testSendBlockToEvaluate [
 
 	client sendBlockToEvaluate: [1+1].
-	self assert: server results equals: 2.
+	"self assert: server results equals: 2."
 	self assert: client results equals: 2. 
 ]
 
@@ -37,6 +44,16 @@ MessageSendThroughSocketTest >> testSendBlockToEvaluate [
 MessageSendThroughSocketTest >> testSendMessageToExecute [
 
 	client sendMessageToExecute: #x:y: from: Point withArgs: #(1 1).
-	self assert: server results equals: 2.
+	"self assert: server results equals: 2."
 	self assert: client results equals: 2. 
+]
+
+{ #category : #'as yet unclassified' }
+MessageSendThroughSocketTest >> testSendMessageTroughProxyToExecute [
+
+	| toCompare result |
+	toCompare:= Point x:1 y:1.
+   result := (self newproxy:Point) x:1 y:1.
+	
+	self assert: result equals: toCompare. 
 ]

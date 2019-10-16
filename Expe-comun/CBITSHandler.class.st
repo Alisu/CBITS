@@ -9,7 +9,8 @@ Class {
 	#name : #CBITSHandler,
 	#superclass : #Object,
 	#instVars : [
-		'messages'
+		'messages',
+		'results'
 	],
 	#category : #'Expe-comun'
 }
@@ -34,10 +35,11 @@ CBITSHandler >> handleMessage: aMessage toTarget: anObject [
 	messages add: aMessage.
 	
 	aSelector := aMessage selector.
-	aReceiver := aMessage receiver.
+	aReceiver := aMessage lookupClass.
 	arguments := aMessage arguments.
 	client := CBITSClient new.
-	client sendMessageToExecute: aSelector from: aReceiver withArgs: arguments
+	^results := client sendMessageToExecute: aSelector from: aReceiver withArgs: arguments
+
 ]
 
 { #category : #handling }
@@ -45,4 +47,9 @@ CBITSHandler >> initialize [
 	super initialize.
 	
 	messages := OrderedCollection new.
+]
+
+{ #category : #handling }
+CBITSHandler >> results [ 
+	^results
 ]
