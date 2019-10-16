@@ -18,14 +18,21 @@ CBITSClient is the one asling for message to be executed on a server (installed 
 mst := CBITSClient new. 
 mst sendMessageToExecute: #x:y: from: Point withArgs: #(1 1).
 ```
+In order to send messages in a seamless way we use proxies.
+This way you can install your proxy that will intercept your message and send it to the other image thank to CBITShandler.
 
 We can also send blocks to be executed:
 ```
 mst := CBITSClient new. 
 mst sendBlock: [Smalltalk globals at: #Object].
 ```
+or:
+```
+[Smalltalk globals at: #Object] valueInAnotherImage.
+```
 
-We rely on Fuel to serialize and materialize arguments, receiver and co...
+
+We rely on Fuel/STON to serialize and materialize arguments, receiver and co...
 
 It means we expect the classes to be present on the other side.
 
@@ -34,8 +41,5 @@ TODO:
 - Having an error handling.
 - Asking for an AST to be executed.
 - Handling arguments in block and non-clean block
-- Extension methods on block.
 
-```
-[Smalltalk globals at: #Object] computeElsewhere.
-```
+
