@@ -19,8 +19,10 @@ MessageSendThroughSocketTest >> setUp [
 	"Hooks that subclasses may override to define the fixture of test."
 	super setUp.
 	"[server := CBITSServer newOnPort: 40001]".
-	client := CBITSClient new. 
+	"client := CBITSClient new."
 	handler := CBITSHandler new.
+	"handler client:	 client."
+	
 
 ]
 
@@ -45,15 +47,16 @@ MessageSendThroughSocketTest >> testSendMessageToExecute [
 
 	client sendMessageToExecute: #x:y: from: Point withArgs: #(1 1).
 	"self assert: server results equals: 2."
-	self assert: client results equals: 2. 
+	self assert: client results equals: (Point x:1 y:1). 
 ]
 
 { #category : #'as yet unclassified' }
 MessageSendThroughSocketTest >> testSendMessageTroughProxyToExecute [
 
-	| toCompare result |
-	toCompare:= Point x:1 y:1.
-   result := (self newproxy:Point) x:1 y:1.
+	| toCompare result proxy |
+	toCompare:= Point x:1 y:2.
+   proxy := (self newproxy: Point).
+	result := proxy x:1 y:2.
 	
 	self assert: result equals: toCompare. 
 ]

@@ -91,7 +91,7 @@ CBITSClient >> sendMessageToExecute: aSelector from: aReceiver withArgs: aCollec
 		(STON toString: aReceiver), '\',
 		(STON toString: aCollection), '\';
 		flush.
-		self messageReceive.
+	self messageReceive.
 ]
 
 { #category : #tests }
