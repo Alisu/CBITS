@@ -1,7 +1,7 @@
 # CBITS
 
 Experiments for communication between (Pharo) images through socket.
-The goal is to manage to send messages from an image to another. Then, have the messages got executed on an other image and finally return "the result" to the initial image.
+The goal is to manage to send messages from an image to another. Then, have the messages got executed on another image and finally return "the result" to the initial image.
 
 Note: the server and the client can be united in only one entity but it's easier for me and to debug to have both separated.
 
@@ -16,10 +16,17 @@ CBITSClient is the one asling for message to be executed on a server (installed 
 
 ```
 mst := CBITSClient new. 
-mst sendMessageToExecute: #x:y: from: Point withArgs: #(1 1).
+mst sendMessageToExecute: #x:y: from: Point withArgs: #(1 2).
 ```
 In order to send messages in a seamless way we use proxies.
 This way you can install your proxy that will intercept your message and send it to the other image thank to CBITShandler.
+Currently using Avatar proxies.
+```
+handler := CBITSHandler new.
+proxy := AvForwardingProxy target: Point handler:handler .
+proxy x:1 y:2.
+```
+
 
 We can also send blocks to be executed:
 ```
