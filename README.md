@@ -31,10 +31,13 @@ or:
 [Smalltalk globals at: #Object] valueInAnotherImage.
 ```
 
+# Serialization
 
 We rely on Fuel/STON to serialize and materialize arguments, receiver and co...
-
 It means we expect the classes to be present on the other side.
+
+FUEL => Allows to serialize about anything (Context, non indexable etc...) but no compatibility between images versions
+STON => Compatible between version (at least 6/7/8) but cannot serialize non-indexable objects, context etc...
 
 TODO:
 
