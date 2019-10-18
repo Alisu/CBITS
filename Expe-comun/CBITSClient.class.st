@@ -36,7 +36,7 @@ CBITSClient >> initialize [
 CBITSClient >> messageReceive [
 	
 	^((clientStream upTo: $\) = 'result')
-		ifTrue: [ results := FLMaterializer materializeFromByteArray: (clientStream upTo: $\) asByteArray. ]
+		ifTrue: [ results := STON fromString: (clientStream upTo: $\). ]
 		ifFalse: [ self error: 'Not implemented yet' ]
 	
 ]
@@ -87,11 +87,11 @@ CBITSClient >> sendMessageToExecute: aSelector from: aReceiver withArgs: aCollec
 	clientStream
 		nextPutAll: 
 		'exec msg',  '\',
-		aSelector, String cr, '\',
-		(FLSerializer serializeToByteArray:aReceiver), '\',
-		(FLSerializer serializeToByteArray: aCollection), '\';
+		(STON toString: aSelector), String cr, '\',
+		(STON toString: aReceiver), '\',
+		(STON toString: aCollection), '\';
 		flush.
-		self messageReceive.
+	self messageReceive.
 ]
 
 { #category : #tests }
@@ -100,7 +100,7 @@ CBITSClient >> sendSerializedBlockToEvaluate: aBlock [
 
 	clientStream nextPutAll:
 	'exec block ser',  '\',
-	(FLSerializer serializeToByteArray: aBlock asContext), '\';
+	(STON toString: aBlock asContext), '\';
 	flush.	
 	"clientStream waitForData."
 	self messageReceive.
